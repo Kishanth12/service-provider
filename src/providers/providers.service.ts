@@ -13,7 +13,7 @@ export class ProvidersService {
   private async findProviderOrFail(id: string) {
     const provider = await this.databaseService.provider.findUnique({
       where: { id },
-      include: { user: true, services: true },
+      include: { user: true, providerServices: true },
     });
     if (!provider) throw new NotFoundException('Provider not found');
     return provider;
