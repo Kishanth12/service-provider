@@ -19,7 +19,7 @@ export class DatabaseService
     const adapter = new PrismaPg(pool);
 
     // 3. Pass the adapter to the super constructor
-    super({ adapter });
+    super({ adapter});     //, log: ['query', 'info', 'warn', 'error'] use this to debug queries
   }
 
   async onModuleInit() {
@@ -30,4 +30,3 @@ export class DatabaseService
     await this.$disconnect();
   }
 }
-

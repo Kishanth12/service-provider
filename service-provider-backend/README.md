@@ -96,3 +96,23 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 ## License
 
 Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+
+Request
+ ↓
+JwtAuthGuard
+  → verifies token
+  → sets request.user
+ ↓
+RolesGuard
+  → reads @Roles metadata
+  → checks request.user.role
+ ↓
+Controller
+  → uses @GetUser()
+
+
+File	Responsibility
+JwtAuthGuard	Authentication
+RolesGuard	Authorization
+Roles decorator	Metadata
+GetUser decorator	Controller convenience

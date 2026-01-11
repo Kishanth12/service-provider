@@ -24,6 +24,6 @@
     "paths": {
       "@prisma-generated": ["src/generated/client/index.js"],
       "@prisma-generated/*": ["src/generated/client/*"]
-    },
+    }
   }
 }
