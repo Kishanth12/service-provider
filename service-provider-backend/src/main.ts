@@ -18,16 +18,27 @@ async function bootstrap() {
 
   app.useGlobalPipes(
     new ValidationPipe({
-      whitelist: true, // remove unknown fields
-      forbidNonWhitelisted: true, // throw error if extra fields sent
-      transform: true, // auto type conversion
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
     }),
   );
 
   app.useLogger(app.get(MyLoggerService));
-  app.enableCors();
+
+  // ✅ Updated CORS configuration
+  app.enableCors({
+    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+    credentials: true, // CRITICAL: Allows cookies
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  });
+
   app.setGlobalPrefix('api');
 
   await app.listen(process.env.PORT ?? 3001);
+  console.log(
+    `🚀 Backend running on http://localhost:${process.env.PORT ?? 3001}`,
+  );
 }
 bootstrap();
