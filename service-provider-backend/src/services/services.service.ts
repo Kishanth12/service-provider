@@ -20,8 +20,6 @@ export class ServicesService {
       where: { userId },
     });
     if (!provider) throw new ForbiddenException('Provider profile not found.');
-    if (!provider.isApproved)
-      throw new ForbiddenException('Provider is not approved yet.');
     return provider.id;
   }
 
@@ -124,14 +122,26 @@ export class ServicesService {
     if (!providerService)
       throw new NotFoundException('Provider service not found');
 
-    // If not admin, verify ownership
-    if (userRole !== Role.ADMIN) {
+    // USER: Can only view available services
+    if (userRole === Role.USER) {
+      if (
+        !providerService.isAvailable ||
+        !providerService.serviceTemplate.isActive
+      ) {
+        throw new NotFoundException('Service is not available');
+      }
+      return providerService;
+    }
+
+    // PROVIDER: Verify ownership
+    if (userRole === Role.PROVIDER) {
       const providerId = await this.getProviderIdFromUser(userId);
       if (providerService.providerId !== providerId) {
         throw new ForbiddenException('Unauthorized access to this service');
       }
     }
 
+    // ADMIN: Can view any service
     return providerService;
   }
 
@@ -226,7 +236,6 @@ export class ServicesService {
     return this.databaseService.providerService.findMany({
       where: {
         isAvailable: true,
-        provider: { isApproved: true },
         serviceTemplate: { isActive: true },
         ...(serviceTemplateId && { serviceTemplateId }),
       },

@@ -2,12 +2,12 @@ import {
   Controller,
   Get,
   Post,
-  Patch,
   Delete,
   Body,
   Param,
   UseGuards,
   Query,
+  Put,
 } from '@nestjs/common';
 import { ServicesService } from './services.service';
 import { RolesGuard } from '../auth/guards/roles.guard';
@@ -46,7 +46,7 @@ export class ServicesController {
     return this.servicesService.createServiceTemplate(dto);
   }
 
-  @Patch('templates/:id')
+  @Put('templates/:id')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles([Role.ADMIN])
   async updateServiceTemplate(
@@ -77,7 +77,7 @@ export class ServicesController {
 
   @Get('provider-services/:id')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles([Role.ADMIN, Role.PROVIDER])
+  @Roles([Role.ADMIN, Role.PROVIDER,Role.USER])
   async getProviderServiceById(
     @GetUser('id') userId: string,
     @GetUser('role') role: string,
@@ -96,7 +96,7 @@ export class ServicesController {
     return this.servicesService.createProviderService(userId, dto);
   }
 
-  @Patch('provider-services/:id')
+  @Put('provider-services/:id')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles([Role.ADMIN, Role.PROVIDER])
   async updateProviderService(
@@ -119,7 +119,7 @@ export class ServicesController {
     return this.servicesService.deleteProviderService(userId, role, id);
   }
 
-  // PUBLIC: Available Services for Booking 
+  // PUBLIC: Available Services for Booking
 
   @Get('available')
   async getAvailableServices(
