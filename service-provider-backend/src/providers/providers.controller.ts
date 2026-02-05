@@ -17,50 +17,50 @@ export class ProvidersController {
   @Get()
   async findAll() {
     const providers = await this.providersService.findAll();
-    return { message: 'Providers retrieved successfully', data: providers };
+    return providers;
   }
 
   @Get(':id')
   async findOne(@Param('id') id: string) {
     const provider = await this.providersService.findOne(id);
-    return { message: 'Provider retrieved successfully', data: provider };
+    return provider;
   }
 
-  @Patch(':id')
-  async update(
-    @Param('id') id: string,
-    @Body() updateProviderDto: UpdateProviderDto,
-  ) {
-    const provider = await this.providersService.update(id, updateProviderDto);
-    return { message: 'Provider updated successfully', data: provider };
-  }
+  // @Patch(':id')
+  // async update(
+  //   @Param('id') id: string,
+  //   @Body() updateProviderDto: UpdateProviderDto,
+  // ) {
+  //   const provider = await this.providersService.update(id, updateProviderDto);
+  //   return { message: 'Provider updated successfully', data: provider };
+  // }
 
-  @Patch(':id/approve')
-  async approve(@Param('id') id: string) {
-    const provider = await this.providersService.approveProvider(id);
-    return { message: 'Provider approved successfully', data: provider };
-  }
+  // @Patch(':id/approve')
+  // async approve(@Param('id') id: string) {
+  //   const provider = await this.providersService.approveProvider(id);
+  //   return { message: 'Provider approved successfully', data: provider };
+  // }
 
-  @Patch(':id/reject')
-  async reject(@Param('id') id: string) {
-    const result = await this.providersService.rejectProvider(id);
-    return { message: result.message };
-  }
+  // @Patch(':id/reject')
+  // async reject(@Param('id') id: string) {
+  //   const result = await this.providersService.rejectProvider(id);
+  //   return { message: result.message };
+  // }
 
-  @Post('apply/:userId')
-  async apply(@Param('userId') userId: string) {
-    const provider = await this.providersService.applyForProvider(userId);
-    return {
-      message: 'Provider application submitted successfully',
-      data: provider,
-    };
-  }
-  @Get('pending/applications')
-  async findPending() {
-    const providers = await this.providersService.findPending();
-    return {
-      message: 'Pending provider applications retrieved successfully',
-      data: providers,
-    };
-  }
+  // @Post('apply/:userId')
+  // async apply(@Param('userId') userId: string) {
+  //   const provider = await this.providersService.applyForProvider(userId);
+  //   return {
+  //     message: 'Provider application submitted successfully',
+  //     data: provider,
+  //   };
+  // }
+  // @Get('pending/applications')
+  // async findPending() {
+  //   const providers = await this.providersService.findPending();
+  //   return {
+  //     message: 'Pending provider applications retrieved successfully',
+  //     data: providers,
+  //   };
+  // }
 }

@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { DatabaseService } from 'src/database/database.service';
-import { UpdateProviderDto } from './dto/update-provider-dto';
+// import { UpdateProviderDto } from './dto/update-provider-dto';
 
 @Injectable()
 export class ProvidersService {
@@ -24,10 +24,14 @@ export class ProvidersService {
     return await this.databaseService.provider.findMany({
       select: {
         id: true,
-        isApproved: true,
         user: { select: { name: true } },
         createdAt: true,
         updatedAt: true,
+        _count: {
+          select: {
+            providerServices: true,
+          },
+        },
       },
     });
   }
@@ -37,112 +41,111 @@ export class ProvidersService {
     return await this.findProviderOrFail(id);
   }
 
-  async update(id: string, updatedProviderDto: UpdateProviderDto) {
-    await this.findProviderOrFail(id);
-    return await this.databaseService.provider.update({
-      where: { id },
-      data: updatedProviderDto,
-      select: {
-        id: true,
-        isApproved: true,
-        user: { select: { name: true } },
-        createdAt: true,
-        updatedAt: true,
-      },
-    });
-  }
+  // async update(id: string, updatedProviderDto: UpdateProviderDto) {
+  //   await this.findProviderOrFail(id);
+  //   return await this.databaseService.provider.update({
+  //     where: { id },
+  //     data: updatedProviderDto,
+  //     select: {
+  //       id: true,
+  //       user: { select: { name: true } },
+  //       createdAt: true,
+  //       updatedAt: true,
+  //     },
+  //   });
+  // }
 
-  // Approve provider
-  async approveProvider(id: string) {
-    const provider = await this.findProviderOrFail(id);
+  // // Approve provider
+  // async approveProvider(id: string) {
+  //   const provider = await this.findProviderOrFail(id);
 
-    const approvedProvider = await this.databaseService.provider.update({
-      where: { id },
-      data: { isApproved: true },
-      select: {
-        id: true,
-        isApproved: true,
-        user: { select: { name: true, role: true } },
-        createdAt: true,
-        updatedAt: true,
-      },
-    });
+  //   const approvedProvider = await this.databaseService.provider.update({
+  //     where: { id },
+  //     data: { isApproved: true },
+  //     select: {
+  //       id: true,
+  //       isApproved: true,
+  //       user: { select: { name: true, role: true } },
+  //       createdAt: true,
+  //       updatedAt: true,
+  //     },
+  //   });
 
-    await this.databaseService.user.update({
-      where: { id: provider.userId },
-      data: { role: 'PROVIDER' },
-    });
+  //   await this.databaseService.user.update({
+  //     where: { id: provider.userId },
+  //     data: { role: 'PROVIDER' },
+  //   });
 
-    return approvedProvider;
-  }
+  //   return approvedProvider;
+  // }
 
-  // Reject provider
-  async rejectProvider(id: string) {
-    await this.findProviderOrFail(id);
+  // // Reject provider
+  // async rejectProvider(id: string) {
+  //   await this.findProviderOrFail(id);
 
-    await this.databaseService.provider.update({
-      where: { id },
-      data: { isApproved: false },
-      select: {
-        id: true,
-        isApproved: true,
-        user: { select: { name: true, role: true } },
-        createdAt: true,
-        updatedAt: true,
-      },
-    });
+  //   await this.databaseService.provider.update({
+  //     where: { id },
+  //     data: { isApproved: false },
+  //     select: {
+  //       id: true,
+  //       isApproved: true,
+  //       user: { select: { name: true, role: true } },
+  //       createdAt: true,
+  //       updatedAt: true,
+  //     },
+  //   });
 
-    return { message: 'Provider application rejected successfully' };
-  }
+  //   return { message: 'Provider application rejected successfully' };
+  // }
 
-  async applyForProvider(userId: string) {
-    const user = await this.databaseService.user.findUnique({
-      where: { id: userId },
-    });
-    if (!user) throw new BadRequestException('User not found');
+  // async applyForProvider(userId: string) {
+  //   const user = await this.databaseService.user.findUnique({
+  //     where: { id: userId },
+  //   });
+  //   if (!user) throw new BadRequestException('User not found');
 
-    if (user.role === 'PROVIDER') {
-      throw new BadRequestException('You are already a provider');
-    }
+  //   if (user.role === 'PROVIDER') {
+  //     throw new BadRequestException('You are already a provider');
+  //   }
 
-    const existingProvider = await this.databaseService.provider.findUnique({
-      where: { userId },
-    });
-    if (existingProvider) {
-      throw new BadRequestException('You have already applied for provider');
-    }
+  //   const existingProvider = await this.databaseService.provider.findUnique({
+  //     where: { userId },
+  //   });
+  //   if (existingProvider) {
+  //     throw new BadRequestException('You have already applied for provider');
+  //   }
 
-    const provider = await this.databaseService.provider.create({
-      data: { userId },
-      select: {
-        id: true,
-        isApproved: true,
-        user: { select: { name: true, role: true } },
-        createdAt: true,
-        updatedAt: true,
-      },
-    });
+  //   const provider = await this.databaseService.provider.create({
+  //     data: { userId },
+  //     select: {
+  //       id: true,
+  //       isApproved: true,
+  //       user: { select: { name: true, role: true } },
+  //       createdAt: true,
+  //       updatedAt: true,
+  //     },
+  //   });
 
-    return provider;
-  }
+  //   return provider;
+  // }
 
-  async findPending() {
-    return this.databaseService.provider.findMany({
-      where: {
-        isApproved: false,
-      },
-      select: {
-        id: true,
-        isApproved: true,
-        createdAt: true,
-        user: {
-          select: {
-            id: true,
-            name: true,
-            email: true,
-          },
-        },
-      },
-    });
-  }
+  // async findPending() {
+  //   return this.databaseService.provider.findMany({
+  //     where: {
+  //       isApproved: false,
+  //     },
+  //     select: {
+  //       id: true,
+  //       isApproved: true,
+  //       createdAt: true,
+  //       user: {
+  //         select: {
+  //           id: true,
+  //           name: true,
+  //           email: true,
+  //         },
+  //       },
+  //     },
+  //   });
+  // }
 }
