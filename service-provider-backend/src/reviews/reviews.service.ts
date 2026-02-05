@@ -2,6 +2,7 @@ import {
   Injectable,
   ForbiddenException,
   NotFoundException,
+  BadRequestException,
 } from '@nestjs/common';
 import { DatabaseService } from 'src/database/database.service';
 import { CreateReviewDto } from './dto/create-review.dto';
@@ -26,31 +27,62 @@ export class ReviewsService {
     if (booking.status !== BookingStatus.COMPLETED)
       throw new ForbiddenException('Booking not completed yet');
 
+    // FIXED: Check by bookingId instead of providerServiceId
+    // This allows multiple reviews for same service if user books multiple times
     const existingReview = await this.db.review.findFirst({
       where: {
-        userId,
-        providerServiceId: booking.providerServiceId,
+        bookingId: dto.bookingId, // Changed from userId + providerServiceId
       },
     });
 
     if (existingReview)
-      throw new ForbiddenException('You already reviewed this service');
+      throw new ForbiddenException('You already reviewed this booking');
 
     return this.db.review.create({
       data: {
         rating: dto.rating,
         comment: dto.comment,
         userId,
+        bookingId: dto.bookingId, // Added bookingId
         providerServiceId: booking.providerServiceId,
+      },
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+        booking: {
+          select: {
+            id: true,
+            date: true,
+          },
+        },
       },
     });
   }
 
   // Get all reviews for a provider service
-  getByProviderService(providerServiceId: string) {
+  async getByProviderService(providerServiceId: string) {
     return this.db.review.findMany({
       where: { providerServiceId },
-      include: { user: true },
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+        booking: {
+          select: {
+            id: true,
+            date: true,
+          },
+        },
+      },
       orderBy: { createdAt: 'desc' },
     });
   }
