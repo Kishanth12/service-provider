@@ -27,7 +27,6 @@ export class AuthService {
       await this.db.provider.create({
         data: {
           userId: user.id,
-          isApproved: false,
         },
       });
     }
