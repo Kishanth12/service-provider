@@ -1,45 +1,67 @@
 import { Role, User } from "@/types";
+import { Users, Briefcase, Shield, BarChart3 } from "lucide-react";
 
 export function UserStats({ users }: { users: User[] }) {
+  const totalUsers = users.filter((u) => u.role === Role.USER).length;
+  const providers = users.filter((u) => u.role === Role.PROVIDER).length;
+  const admins = users.filter((u) => u.role === Role.ADMIN).length;
+
   const stats = [
     {
-      label: "Total Users",
-      value: users.filter((u) => u.role === Role.USER).length,
-      color: "bg-blue-500",
+      label: "Users",
+      value: totalUsers,
+      icon: Users,
+      iconStyle: "bg-blue-50 text-blue-600",
     },
     {
       label: "Providers",
-      value: users.filter((u) => u.role === Role.PROVIDER).length,
-      color: "bg-green-500",
+      value: providers,
+      icon: Briefcase,
+      iconStyle: "bg-emerald-50 text-emerald-600",
     },
     {
       label: "Admins",
-      value: users.filter((u) => u.role === Role.ADMIN).length,
-      color: "bg-purple-500",
+      value: admins,
+      icon: Shield,
+      iconStyle: "bg-purple-50 text-purple-600",
     },
     {
       label: "Total",
       value: users.length,
-      color: "bg-slate-500",
+      icon: BarChart3,
+      iconStyle: "bg-slate-100 text-slate-600",
     },
   ];
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-      {stats.map((stat) => (
-        <div
-          key={stat.label}
-          className="bg-white rounded-lg border border-slate-200 p-6"
-        >
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-slate-600">{stat.label}</p>
-              <p className="text-3xl font-bold mt-2">{stat.value}</p>
+    <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+      {stats.map((stat) => {
+        const Icon = stat.icon;
+
+        return (
+          <div
+            key={stat.label}
+            className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:shadow-md"
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-slate-500">
+                  {stat.label}
+                </p>
+                <p className="mt-3 text-4xl font-semibold text-slate-900">
+                  {stat.value}
+                </p>
+              </div>
+
+              <div
+                className={`flex h-12 w-12 items-center justify-center rounded-xl ${stat.iconStyle}`}
+              >
+                <Icon className="h-6 w-6" />
+              </div>
             </div>
-            <div className={`w-12 h-12 rounded-lg ${stat.color} opacity-10`} />
           </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 }
