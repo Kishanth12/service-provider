@@ -1,6 +1,6 @@
-import { Badge } from '@/components/ui/badge';
-import { BookingStatus } from '@/types';
-import { cn } from '@/lib/utils/cn';
+import { Badge } from "@/components/ui/badge";
+import { BookingStatus } from "@/types";
+import { cn } from "@/lib/utils/cn";
 
 interface BookingStatusBadgeProps {
   status: BookingStatus;
@@ -8,24 +8,34 @@ interface BookingStatusBadgeProps {
 
 const statusConfig = {
   [BookingStatus.PENDING]: {
-    label: 'Pending',
-    className: 'bg-yellow-100 text-yellow-800 hover:bg-yellow-100',
+    label: "Pending",
+    gradient: "from-amber-400 to-yellow-500",
+    ring: "ring-amber-200 dark:ring-amber-900/40",
+    dot: "bg-yellow-50",
   },
   [BookingStatus.ACCEPTED]: {
-    label: 'Accepted',
-    className: 'bg-blue-100 text-blue-800 hover:bg-blue-100',
+    label: "Accepted",
+    gradient: "from-blue-500 to-indigo-600",
+    ring: "ring-blue-200 dark:ring-blue-900/40",
+    dot: "bg-blue-50",
   },
   [BookingStatus.IN_PROGRESS]: {
-    label: 'In Progress',
-    className: 'bg-purple-100 text-purple-800 hover:bg-purple-100',
+    label: "In Progress",
+    gradient: "from-purple-500 to-fuchsia-600",
+    ring: "ring-purple-200 dark:ring-purple-900/40",
+    dot: "bg-purple-50",
   },
   [BookingStatus.COMPLETED]: {
-    label: 'Completed',
-    className: 'bg-green-100 text-green-800 hover:bg-green-100',
+    label: "Completed",
+    gradient: "from-emerald-500 to-green-600",
+    ring: "ring-emerald-200 dark:ring-emerald-900/40",
+    dot: "bg-emerald-50",
   },
   [BookingStatus.CANCELLED]: {
-    label: 'Cancelled',
-    className: 'bg-red-100 text-red-800 hover:bg-red-100',
+    label: "Cancelled",
+    gradient: "from-red-500 to-rose-600",
+    ring: "ring-red-200 dark:ring-red-900/40",
+    dot: "bg-red-50",
   },
 };
 
@@ -33,7 +43,17 @@ export function BookingStatusBadge({ status }: BookingStatusBadgeProps) {
   const config = statusConfig[status];
 
   return (
-    <Badge variant="secondary" className={cn(config.className)}>
+    <Badge
+      className={cn(
+        "inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-semibold text-white",
+        "bg-gradient-to-r",
+        config.gradient,
+        "ring-1",
+        config.ring,
+        "shadow-sm transition hover:shadow-md",
+      )}
+    >
+      <span className={cn("h-2 w-2 rounded-full", config.dot, "shadow")} />
       {config.label}
     </Badge>
   );
