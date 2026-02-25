@@ -3,8 +3,8 @@
 import { ServiceTemplate } from "@/types";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Check } from "lucide-react";
+import { cn } from "@/lib/utils/cn";
 
 interface ServiceTemplateSelectorProps {
   templates: ServiceTemplate[];
@@ -28,36 +28,70 @@ export function ServiceTemplateSelector({
         return (
           <Card
             key={template.id}
-            className={`cursor-pointer transition-all ${
-              isSelected
-                ? "border-blue-500 ring-2 ring-blue-200"
-                : alreadyAdded
-                ? "opacity-50 cursor-not-allowed"
-                : "hover:border-slate-300"
-            }`}
+            role="button"
+            tabIndex={alreadyAdded ? -1 : 0}
             onClick={() => !alreadyAdded && onSelect(template.id)}
+            onKeyDown={(e) => {
+              if (alreadyAdded) return;
+              if (e.key === "Enter" || e.key === " ") onSelect(template.id);
+            }}
+            className={cn(
+              "group relative overflow-hidden rounded-2xl border bg-white/75 backdrop-blur-xl shadow-sm transition-all duration-300 dark:bg-slate-950/40",
+              alreadyAdded
+                ? "cursor-not-allowed opacity-60 border-slate-200/70 dark:border-slate-800/60"
+                : "cursor-pointer border-slate-200/70 hover:-translate-y-0.5 hover:shadow-xl hover:border-slate-300 dark:border-slate-800/60 dark:hover:border-slate-700",
+              isSelected &&
+                !alreadyAdded &&
+                "border-blue-500 ring-2 ring-blue-200/80 dark:ring-blue-900/40",
+            )}
           >
-            <CardContent className="p-4">
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
+            {/* top accent only for selected */}
+            {isSelected && !alreadyAdded && (
+              <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-sky-500 via-indigo-500 to-fuchsia-500 opacity-80" />
+            )}
+
+            <CardContent className="p-5">
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2 mb-2">
-                    <h3 className="font-semibold">{template.title}</h3>
+                    <h3 className="font-bold text-slate-900 line-clamp-1 dark:text-white">
+                      {template.title}
+                    </h3>
+
                     {alreadyAdded && (
-                      <Badge className="bg-green-100 text-green-800 text-xs">
+                      <Badge className="rounded-full bg-gradient-to-r from-emerald-500 to-green-600 text-white text-[11px] px-2.5 py-1 shadow-sm">
                         Added
                       </Badge>
                     )}
                   </div>
-                  <p className="text-sm text-slate-600 line-clamp-2">
+
+                  <p className="text-sm text-slate-600 line-clamp-2 dark:text-slate-300">
                     {template.description}
                   </p>
                 </div>
+
+                {/* Selected indicator */}
                 {isSelected && !alreadyAdded && (
-                  <div className="ml-2">
-                    <div className="w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center">
-                      <Check className="h-4 w-4 text-white" />
+                  <div className="shrink-0">
+                    <div className="h-9 w-9 rounded-2xl bg-gradient-to-r from-blue-500 to-indigo-600 flex items-center justify-center shadow-sm ring-1 ring-blue-200/70 dark:ring-blue-900/40">
+                      <Check className="h-5 w-5 text-white" />
                     </div>
                   </div>
+                )}
+              </div>
+
+              {/* subtle footer hint */}
+              <div className="mt-4 flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
+                <span>
+                  {alreadyAdded
+                    ? "Already in your services"
+                    : isSelected
+                      ? "Selected"
+                      : "Click to select"}
+                </span>
+
+                {!alreadyAdded && !isSelected && (
+                  <span className="hidden sm:inline">Quick add</span>
                 )}
               </div>
             </CardContent>
