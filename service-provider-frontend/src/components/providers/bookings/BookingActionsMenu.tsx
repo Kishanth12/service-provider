@@ -27,41 +27,55 @@ export function BookingActionsMenu({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="sm">
+        <Button
+          variant="ghost"
+          size="sm"
+          className="h-9 w-9 rounded-xl p-0 text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800/60"
+        >
           <MoreVertical className="h-4 w-4" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
+
+      <DropdownMenuContent
+        align="end"
+        className="w-52 rounded-xl border border-slate-200/70 bg-white/90 backdrop-blur-xl shadow-xl dark:border-slate-800/60 dark:bg-slate-950/90"
+      >
         {canAccept && (
           <DropdownMenuItem
             onClick={() => onUpdateStatus(booking, BookingStatus.ACCEPTED)}
+            className="cursor-pointer rounded-lg focus:bg-slate-100 dark:focus:bg-slate-800/60"
           >
-            <Check className="h-4 w-4 mr-2 text-green-600" />
+            <Check className="h-4 w-4 mr-2 text-emerald-600 dark:text-emerald-400" />
             Accept Booking
           </DropdownMenuItem>
         )}
+
         {canReject && (
           <DropdownMenuItem
             onClick={() => onUpdateStatus(booking, BookingStatus.CANCELLED)}
-            className="text-red-600"
+            className="cursor-pointer rounded-lg text-red-600 focus:bg-red-50 dark:text-red-400 dark:focus:bg-red-900/20"
           >
             <X className="h-4 w-4 mr-2" />
             Reject Booking
           </DropdownMenuItem>
         )}
+
         {canStart && (
           <DropdownMenuItem
             onClick={() => onUpdateStatus(booking, BookingStatus.IN_PROGRESS)}
+            className="cursor-pointer rounded-lg focus:bg-slate-100 dark:focus:bg-slate-800/60"
           >
-            <PlayCircle className="h-4 w-4 mr-2 text-blue-600" />
+            <PlayCircle className="h-4 w-4 mr-2 text-blue-600 dark:text-blue-400" />
             Start Service
           </DropdownMenuItem>
         )}
+
         {canComplete && (
           <DropdownMenuItem
             onClick={() => onUpdateStatus(booking, BookingStatus.COMPLETED)}
+            className="cursor-pointer rounded-lg focus:bg-slate-100 dark:focus:bg-slate-800/60"
           >
-            <CheckCircle className="h-4 w-4 mr-2 text-purple-600" />
+            <CheckCircle className="h-4 w-4 mr-2 text-purple-600 dark:text-purple-400" />
             Mark as Completed
           </DropdownMenuItem>
         )}
