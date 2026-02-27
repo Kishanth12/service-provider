@@ -3,21 +3,26 @@ import { Review } from "@/types";
 
 export interface CreateReviewDto {
   bookingId: string;
-  rating: number; // 1-5
+  rating: number;
   comment?: string;
 }
 
 export const reviewApi = {
-  // Create review (User after completed booking)
   create: async (data: CreateReviewDto): Promise<Review> => {
-    const response = await apiClient.post("/reviews", data);
-    return response.data.data;
-  },
+    try {
+      const response = await apiClient.post("/reviews", data);
+      return response.data.data;
+    } catch (error: any) {
+      if (error.response?.data?.message) {
+        throw new Error(error.response.data.message);
+      }
 
-  // Get reviews for a specific provider service
+      throw new Error("Something went wrong while submitting review.");
+    }
+  },
   getByService: async (providerServiceId: string): Promise<Review[]> => {
     const response = await apiClient.get(
-      `/reviews/service/${providerServiceId}`
+      `/reviews/service/${providerServiceId}`,
     );
     return response.data.data;
   },

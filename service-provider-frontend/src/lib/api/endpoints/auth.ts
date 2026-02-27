@@ -4,7 +4,7 @@ import { AuthResponse, LoginCredentials, RegisterData, Role } from "@/types";
 export const authApi = {
   login: async (credentials: LoginCredentials): Promise<AuthResponse> => {
     const response = await apiClient.post("/auth/login", credentials, {
-      withCredentials: true, // Important: enables cookies
+      withCredentials: true, 
     });
     const data = response.data.data;
 
@@ -23,7 +23,7 @@ export const authApi = {
 
   register: async (registerData: RegisterData): Promise<AuthResponse> => {
     const response = await apiClient.post("/auth/register", registerData, {
-      withCredentials: true, // Important: enables cookies
+      withCredentials: true,
     });
     const data = response.data.data;
 
@@ -45,7 +45,7 @@ export const authApi = {
       "/auth/logout",
       {},
       {
-        withCredentials: true, // Important: clears cookie
+        withCredentials: true, 
       }
     );
   },
