@@ -24,7 +24,6 @@ export default function ProviderServiceEditPage() {
   } = useProviderServiceById(serviceId);
 
   const handleSubmit = async (data: ProviderServiceFormData) => {
-    // Remove serviceTemplateId from update data (it's not editable)
     const updateData = {
       price: data.price,
       isAvailable: data.isAvailable,

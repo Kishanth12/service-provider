@@ -1,7 +1,3 @@
-// ============================================
-// FILE: app/provider/services/page.tsx
-// ============================================
-
 "use client";
 
 import { useState } from "react";
@@ -27,6 +23,9 @@ import {
   Eye,
   Edit,
   Star,
+  Layers,
+  CheckCircle2,
+  MessageSquareText,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -40,6 +39,7 @@ import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
 import { ErrorState } from "@/components/shared/ErrorState";
 import { DeleteConfirmModal } from "@/components/shared/DeleteConfirmModal";
 import { DataTable } from "@/components/shared/DataTable";
+import { cn } from "@/lib/utils/cn";
 
 function ServiceActionsMenu({
   service,
@@ -55,7 +55,7 @@ function ServiceActionsMenu({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="sm">
+        <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
           <MoreVertical className="h-4 w-4" />
         </Button>
       </DropdownMenuTrigger>
@@ -98,6 +98,80 @@ function ServiceRating({ serviceId }: { serviceId: string }) {
       <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
       <span className="font-medium">{avgRating.toFixed(1)}</span>
       <span className="text-xs text-slate-500">({reviews.length})</span>
+    </div>
+  );
+}
+
+function StatCard({
+  label,
+  value,
+  icon,
+  tone,
+}: {
+  label: string;
+  value: number;
+  icon: React.ReactNode;
+  tone: "blue" | "emerald" | "amber";
+}) {
+  const tones = {
+    blue: {
+      chip: "bg-sky-500/10 text-sky-700 ring-sky-200",
+      iconWrap: "bg-sky-500/10 text-sky-700",
+      top: "from-sky-500 via-indigo-500 to-violet-500",
+    },
+    emerald: {
+      chip: "bg-emerald-500/10 text-emerald-700 ring-emerald-200",
+      iconWrap: "bg-emerald-500/10 text-emerald-700",
+      top: "from-emerald-500 via-green-500 to-teal-500",
+    },
+    amber: {
+      chip: "bg-amber-500/10 text-amber-700 ring-amber-200",
+      iconWrap: "bg-amber-500/10 text-amber-700",
+      top: "from-amber-500 via-yellow-500 to-orange-500",
+    },
+  };
+
+  const t = tones[tone];
+
+  return (
+    <div className="group relative overflow-hidden rounded-2xl border border-slate-200/70 bg-white/80 backdrop-blur-xl p-6 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl">
+      {/* top gradient accent */}
+      <div
+        className={cn("absolute inset-x-0 top-0 h-1 bg-gradient-to-r", t.top)}
+      />
+
+      {/* subtle decor */}
+      <div className="pointer-events-none absolute -right-14 -top-14 h-40 w-40 rounded-full bg-slate-900/5 blur-2xl" />
+      <div className="pointer-events-none absolute -left-14 -bottom-14 h-40 w-40 rounded-full bg-slate-900/5 blur-2xl" />
+
+      <div className="flex items-start justify-between gap-4">
+        <div className="min-w-0">
+          <p className="text-sm font-medium text-slate-600">{label}</p>
+          <p className="mt-3 text-4xl font-extrabold tracking-tight text-slate-900">
+            {value}
+          </p>
+
+          <div
+            className={cn(
+              "mt-3 inline-flex items-center gap-2 rounded-full px-2.5 py-1 text-xs font-semibold ring-1",
+              t.chip,
+            )}
+          >
+            <CheckCircle2 className="h-3.5 w-3.5" />
+            Real-time
+          </div>
+        </div>
+
+        <div
+          className={cn(
+            "shrink-0 rounded-2xl p-3 shadow-sm transition-transform duration-300 group-hover:scale-105",
+            t.iconWrap,
+          )}
+          aria-hidden="true"
+        >
+          {icon}
+        </div>
+      </div>
     </div>
   );
 }
@@ -175,24 +249,8 @@ export default function ProviderServicesPage() {
     }
   };
 
-  // Stats
-  const stats = [
-    {
-      label: "Total Services",
-      value: services.length,
-      color: "bg-blue-500",
-    },
-    {
-      label: "Available",
-      value: services.filter((s) => s.isAvailable).length,
-      color: "bg-green-500",
-    },
-    {
-      label: "Total Reviews",
-      value: totalReviews,
-      color: "bg-yellow-500",
-    },
-  ];
+  const totalServices = services.length;
+  const availableCount = services.filter((s) => s.isAvailable).length;
 
   // Table columns
   const columns = [
@@ -200,8 +258,10 @@ export default function ProviderServicesPage() {
       header: "Service",
       accessorKey: "title",
       cell: (service: ProviderService) => (
-        <div>
-          <p className="font-medium">{service.serviceTemplate?.title}</p>
+        <div className="min-w-0">
+          <p className="font-medium text-slate-900">
+            {service.serviceTemplate?.title}
+          </p>
           <p className="text-sm text-slate-500 line-clamp-1">
             {service.serviceTemplate?.description}
           </p>
@@ -212,7 +272,9 @@ export default function ProviderServicesPage() {
       header: "Price",
       accessorKey: "price",
       cell: (service: ProviderService) => (
-        <p className="font-semibold">${service.price.toFixed(2)}</p>
+        <p className="font-semibold text-slate-900">
+          ${service.price.toFixed(2)}
+        </p>
       ),
     },
     {
@@ -233,7 +295,7 @@ export default function ProviderServicesPage() {
       header: "Added",
       accessorKey: "createdAt",
       cell: (service: ProviderService) => (
-        <p className="text-sm">
+        <p className="text-sm text-slate-600">
           {new Date(service.createdAt).toLocaleDateString()}
         </p>
       ),
@@ -252,50 +314,58 @@ export default function ProviderServicesPage() {
     },
   ];
 
-  if (isLoading) {
-    return <LoadingSpinner />;
-  }
+  if (isLoading) return <LoadingSpinner />;
 
   if (error) {
     return <ErrorState message="Failed to load services" onRetry={refetch} />;
   }
 
   return (
-    <div className="p-6">
+    <div className="relative p-6">
+      {/* subtle page glow */}
+      <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+        <div className="absolute -top-28 -right-24 h-72 w-72 rounded-full bg-sky-300/20 blur-3xl" />
+        <div className="absolute -bottom-24 -left-24 h-72 w-72 rounded-full bg-fuchsia-300/15 blur-3xl" />
+      </div>
+
       {/* Header */}
       <div className="mb-6">
-        <h1 className="text-3xl font-bold">My Services</h1>
+        <h1 className="text-3xl font-extrabold tracking-tight text-slate-900">
+          My Services
+        </h1>
         <p className="text-slate-600 mt-1">
           Manage your service offerings and availability
         </p>
       </div>
 
-      {/* Stats */}
+      {/* Stats (updated UI + professional icons) */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        {stats.map((stat) => (
-          <div
-            key={stat.label}
-            className="bg-white rounded-lg border border-slate-200 p-6"
-          >
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-slate-600">{stat.label}</p>
-                <p className="text-3xl font-bold mt-2">{stat.value}</p>
-              </div>
-              <div
-                className={`w-12 h-12 rounded-lg ${stat.color} opacity-10`}
-              />
-            </div>
-          </div>
-        ))}
+        <StatCard
+          label="Total Services"
+          value={totalServices}
+          tone="blue"
+          icon={<Layers className="h-5 w-5" />}
+        />
+        <StatCard
+          label="Available"
+          value={availableCount}
+          tone="emerald"
+          icon={<CheckCircle2 className="h-5 w-5" />}
+        />
+        <StatCard
+          label="Total Reviews"
+          value={totalReviews}
+          tone="amber"
+          icon={<MessageSquareText className="h-5 w-5" />}
+        />
       </div>
 
       {/* Filters and Actions */}
-      <div className="bg-white rounded-lg border border-slate-200 p-4 mb-6">
+      <div className="rounded-2xl border border-slate-200/70 bg-white/80 backdrop-blur-xl p-4 mb-6 shadow-sm">
         <div className="flex flex-col md:flex-row gap-4">
           {/* Search */}
           <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 h-4 w-4" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 h-4 w-4" />
             <Input
               placeholder="Search services..."
               value={searchQuery}
@@ -311,7 +381,7 @@ export default function ProviderServicesPage() {
               setStatusFilter(value as "all" | "available" | "unavailable")
             }
           >
-            <SelectTrigger className="w-full md:w-48">
+            <SelectTrigger className="w-full md:w-56">
               <Filter className="h-4 w-4 mr-2" />
               <SelectValue placeholder="Filter by status" />
             </SelectTrigger>
@@ -331,7 +401,7 @@ export default function ProviderServicesPage() {
       </div>
 
       {/* Services Table */}
-      <div className="bg-white rounded-lg border border-slate-200">
+      <div className="rounded-2xl border border-slate-200/70 bg-white/80 backdrop-blur-xl shadow-sm overflow-hidden">
         <DataTable
           data={filteredServices}
           columns={columns}
