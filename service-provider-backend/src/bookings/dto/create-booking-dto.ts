@@ -8,5 +8,5 @@ export class CreateBookingDto {
   date: string;
 
   @IsString()
-  timeSlot: string; // "09:00-10:00"
+  timeSlot: string; 
 }

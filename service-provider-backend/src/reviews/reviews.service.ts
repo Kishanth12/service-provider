@@ -12,38 +12,36 @@ import { BookingStatus } from '@prisma-generated/enums';
 export class ReviewsService {
   constructor(private readonly db: DatabaseService) {}
 
-  // Create review after COMPLETED booking
   async create(dto: CreateReviewDto, userId: string) {
     const booking = await this.db.booking.findUnique({
       where: { id: dto.bookingId },
       include: { providerService: true },
     });
 
-    if (!booking) throw new NotFoundException('Booking not found');
+    if (!booking) throw new NotFoundException({message:'Booking not found'});
 
     if (booking.userId !== userId)
-      throw new ForbiddenException('Not your booking');
+      throw new ForbiddenException({message:'Not your booking'});
 
     if (booking.status !== BookingStatus.COMPLETED)
-      throw new ForbiddenException('Booking not completed yet');
+      throw new ForbiddenException({message:'Booking not completed yet'});
 
-    // FIXED: Check by bookingId instead of providerServiceId
-    // This allows multiple reviews for same service if user books multiple times
     const existingReview = await this.db.review.findFirst({
       where: {
-        bookingId: dto.bookingId, // Changed from userId + providerServiceId
+        userId,
+        providerServiceId: booking.providerServiceId,
       },
     });
 
     if (existingReview)
-      throw new ForbiddenException('You already reviewed this booking');
+      throw new ForbiddenException({message:'You have already reviewed this service. Thank you for your feedback!'});
 
     return this.db.review.create({
       data: {
         rating: dto.rating,
         comment: dto.comment,
         userId,
-        bookingId: dto.bookingId, // Added bookingId
+        bookingId: dto.bookingId,
         providerServiceId: booking.providerServiceId,
       },
       include: {

@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 @Injectable()
 export class CookieService {
   private readonly COOKIE_NAME = 'auth-storage';
-  private readonly MAX_AGE = 7 * 24 * 60 * 60 * 1000; // 7 days
+  private readonly MAX_AGE = 7 * 24 * 60 * 60 * 1000; 
 
   createAuthCookie(userData: any) {
     const authData = {
@@ -13,6 +13,7 @@ export class CookieService {
           email: userData.email,
           name: userData.name,
           role: userData.role,
+          providerId: userData.providerId, // store providerId for provider-scoped operations
           createdAt: userData.createdAt,
           updatedAt: userData.updatedAt,
         },

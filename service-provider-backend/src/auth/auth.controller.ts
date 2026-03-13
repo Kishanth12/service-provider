@@ -23,7 +23,6 @@ export class AuthController {
       body.role,
     );
 
-    // Return without success wrapper - ResponseInterceptor will add it
     return {
       ...result,
       setCookie: this.cookieService.createAuthCookie(result),
@@ -34,7 +33,6 @@ export class AuthController {
   async login(@Body() body: { email: string; password: string }) {
     const result = await this.authService.login(body.email, body.password);
 
-    // Return without success wrapper - ResponseInterceptor will add it
     return {
       ...result,
       setCookie: this.cookieService.createAuthCookie(result),
@@ -43,7 +41,6 @@ export class AuthController {
 
   @Post('logout')
   async logout() {
-    // Return without success wrapper - ResponseInterceptor will add it
     return {
       message: 'Logged out successfully',
       setCookie: this.cookieService.clearAuthCookie(),

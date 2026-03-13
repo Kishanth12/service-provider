@@ -6,9 +6,12 @@ import {
   Param,
   Put,
   Query,
+  Req,
+  UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { UserQueryDto } from './dto/user-query.dto.ts';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { UserQueryDto } from './dto/user-query.dto';
 import { UpdateUserDto } from './dto/update-user-dto';
 
 @Controller('users')
@@ -18,6 +21,12 @@ export class UsersController {
   @Get()
   findAll(@Query() query: UserQueryDto) {
     return this.usersService.findAll(query.role);
+  }
+
+  @Get('me') // GET /users/me — must be before :id
+  @UseGuards(JwtAuthGuard)
+  getMe(@Req() req) {
+    return this.usersService.findOne(req.user.id);
   }
 
   @Get(':id') // GET /users/:id

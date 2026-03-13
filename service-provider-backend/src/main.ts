@@ -26,7 +26,6 @@ async function bootstrap() {
 
   app.useLogger(app.get(MyLoggerService));
 
-  // ✅ Updated CORS configuration
   app.enableCors({
     origin: process.env.FRONTEND_URL || 'http://localhost:3000',
     credentials: true, // CRITICAL: Allows cookies

@@ -12,6 +12,14 @@ export class AuthService {
   ) {}
 
   async register(name: string, email: string, password: string, role: Role) {
+    const existingUser = await this.db.user.findUnique({
+      where: { email },
+    });
+
+    if (existingUser) {
+      throw new UnauthorizedException('Email already exists');
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const user = await this.db.user.create({
@@ -25,9 +33,7 @@ export class AuthService {
 
     if (role === Role.PROVIDER) {
       await this.db.provider.create({
-        data: {
-          userId: user.id,
-        },
+        data: { userId: user.id },
       });
     }
 
@@ -57,7 +63,12 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    const payload = { id: user.id, email: user.email, role: user.role };
+    const payload = {
+      id: user.id,
+      email: user.email,
+      role: user.role,
+      providerId: user.provider?.id, // included so req.user.providerId works in guards/controllers
+    };
     const access_token = this.jwtService.sign(payload);
 
     return {

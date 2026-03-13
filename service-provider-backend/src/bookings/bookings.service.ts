@@ -13,7 +13,6 @@ export class BookingsService {
 
   // USER → create booking
   async create(dto: CreateBookingDto, userId: string) {
-    // Prevent double booking
     const exists = await this.db.booking.findFirst({
       where: {
         providerServiceId: dto.providerServiceId,
