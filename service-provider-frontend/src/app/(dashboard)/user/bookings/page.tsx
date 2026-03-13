@@ -189,6 +189,9 @@ export default function UserBookingsPage() {
           setReviewBooking(null);
           refetch();
         },
+        onError: () => {
+          setReviewBooking(null);
+        }
       },
     );
   };

@@ -37,34 +37,6 @@ export default function UserProfilePage() {
             Manage your account information
           </p>
         </div>
-
-        {!isEditing ? (
-          <Button
-            onClick={() => setIsEditing(true)}
-            className="w-full sm:w-auto"
-          >
-            <Pencil className="h-4 w-4 mr-2" />
-            Edit Profile
-          </Button>
-        ) : (
-          <div className="flex gap-2 w-full sm:w-auto">
-            <Button
-              onClick={() => setIsEditing(false)}
-              className="flex-1 sm:flex-none"
-            >
-              <Save className="h-4 w-4 mr-2" />
-              Save
-            </Button>
-            <Button
-              variant="outline"
-              onClick={() => setIsEditing(false)}
-              className="flex-1 sm:flex-none"
-            >
-              <X className="h-4 w-4 mr-2" />
-              Cancel
-            </Button>
-          </div>
-        )}
       </div>
 
       {/* Content */}

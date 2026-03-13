@@ -329,7 +329,7 @@ export default function HomePage() {
       {/* Footer */}
       <footer className="border-t border-slate-200/60 bg-white/60 backdrop-blur dark:border-slate-800/60 dark:bg-slate-950/40 py-8">
         <div className="container mx-auto px-4 text-center text-slate-600 dark:text-slate-400">
-          <p>&copy; 2024 ServiceHub. All rights reserved.</p>
+          <p>&copy; 2026 ServiceHub. All rights reserved.</p>
         </div>
       </footer>
     </motion.div>

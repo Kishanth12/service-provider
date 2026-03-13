@@ -19,9 +19,7 @@ export function BookingActionsMenu({
 }: BookingActionsMenuProps) {
   const canAccept = booking.status === BookingStatus.PENDING;
   const canReject = booking.status === BookingStatus.PENDING;
-  const canStart =
-    booking.status === BookingStatus.ACCEPTED &&
-    new Date(booking.date).toDateString() === new Date().toDateString();
+  const canStart = booking.status === BookingStatus.ACCEPTED;
   const canComplete = booking.status === BookingStatus.IN_PROGRESS;
 
   return (

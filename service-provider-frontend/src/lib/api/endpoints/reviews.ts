@@ -13,6 +13,11 @@ export const reviewApi = {
       const response = await apiClient.post("/reviews", data);
       return response.data.data;
     } catch (error: any) {
+      if (error.response?.data?.response?.message) {
+        const msg = error.response.data.response.message;
+        throw new Error(typeof msg === 'string' ? msg : msg[0]);
+      }
+      
       if (error.response?.data?.message) {
         throw new Error(error.response.data.message);
       }

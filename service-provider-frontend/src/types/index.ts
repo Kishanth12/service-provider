@@ -19,6 +19,7 @@ export interface User {
   name: string;
   email: string;
   role: Role;
+  providerId?: string; // only set for PROVIDER role
   createdAt: string;
   updatedAt: string;
 }
