@@ -13,7 +13,7 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { CreateBookingDto } from './dto/create-booking-dto';
-import { BookingStatus, Role } from '@prisma-generated/enums';
+import { BookingStatus, Role } from '@prisma/client';
 
 @Controller('bookings')
 @UseGuards(JwtAuthGuard, RolesGuard)

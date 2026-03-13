@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { DatabaseService } from 'src/database/database.service';
 import { CreateBookingDto } from './dto/create-booking-dto';
-import { BookingStatus } from '@prisma-generated/enums';
+import { BookingStatus } from '@prisma/client';
 
 @Injectable()
 export class BookingsService {

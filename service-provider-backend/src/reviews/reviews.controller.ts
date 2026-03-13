@@ -11,7 +11,7 @@ import { ReviewsService } from './reviews.service';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { Roles } from 'src/auth/decorators/roles.decorator';
-import { Role } from '@prisma-generated/enums';
+import { Role } from '@prisma/client';
 import { CreateReviewDto } from './dto/create-review.dto';
 
 @Controller('reviews')

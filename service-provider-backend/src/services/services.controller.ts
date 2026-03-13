@@ -14,7 +14,7 @@ import { RolesGuard } from '../auth/guards/roles.guard';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { GetUser } from 'src/auth/decorators/user.decorator';
-import { Role } from '@prisma-generated/enums';
+import { Role } from '@prisma/client';
 import { CreateServiceDto } from './dto/create-service-dto';
 import { UpdateServiceDto } from './dto/update-service-dto';
 import { CreateProviderServiceDto } from './dto/create-provider-service-dto';

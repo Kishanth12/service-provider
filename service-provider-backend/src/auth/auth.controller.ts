@@ -2,7 +2,7 @@ import { Body, Controller, Post, UseInterceptors } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CookieService } from './cookie.service';
 import { SetCookieInterceptor } from './set-cookie.interceptor';
-import { Role } from '@prisma-generated/client';
+import { Role } from '@prisma/client';
 
 @Controller('auth')
 @UseInterceptors(SetCookieInterceptor)

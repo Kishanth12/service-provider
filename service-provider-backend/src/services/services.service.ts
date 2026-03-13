@@ -5,7 +5,7 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { DatabaseService } from 'src/database/database.service';
-import { Role } from '@prisma-generated/enums';
+import { Role } from '@prisma/client';
 import { CreateProviderServiceDto } from './dto/create-provider-service-dto';
 import { UpdateProviderServiceDto } from './dto/update-provider-service-dto';
 import { CreateServiceDto } from './dto/create-service-dto';
