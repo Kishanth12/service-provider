@@ -27,7 +27,21 @@ async function bootstrap() {
   app.useLogger(app.get(MyLoggerService));
 
   app.enableCors({
-    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+    origin: (origin, callback) => {
+      const allowedOrigins = [
+        process.env.FRONTEND_URL,
+        'http://localhost:3000',
+        /\.onrender\.com$/, // Allow all Render subdomains
+      ].filter(Boolean);
+
+      if (!origin || allowedOrigins.some(ao => 
+        ao && (typeof ao === 'string' ? ao === origin : ao.test(origin))
+      )) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],

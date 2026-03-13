@@ -6,7 +6,10 @@ export const authApi = {
     const response = await apiClient.post("/auth/login", credentials, {
       withCredentials: true, 
     });
-    const data = response.data.data;
+    const data = response?.data?.data;
+    if (!data) {
+      throw new Error("Invalid response format from server");
+    }
 
     return {
       user: {
@@ -26,7 +29,10 @@ export const authApi = {
     const response = await apiClient.post("/auth/register", registerData, {
       withCredentials: true,
     });
-    const data = response.data.data;
+    const data = response?.data?.data;
+    if (!data) {
+      throw new Error("Invalid response format from server");
+    }
 
     return {
       user: {

@@ -24,7 +24,15 @@ apiClient.interceptors.request.use((config) => {
 
 // Better error handling
 apiClient.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    // Check if response is JSON (prevent Unexpected Token error)
+    const contentType = response.headers['content-type'];
+    if (contentType && !contentType.includes('application/json')) {
+      console.warn("⚠️ Received non-JSON response from API:", contentType);
+      // We don't reject here if it's a 2xx, but usually API should return JSON
+    }
+    return response;
+  },
   (error) => {
     if (error.code === "ERR_NETWORK") {
       console.error(
@@ -32,6 +40,17 @@ apiClient.interceptors.response.use(
         error.config?.baseURL
       );
     }
+    
+    // Check for HTML response in error (common for 404/500 on some hosts)
+    const contentType = error.response?.headers?.['content-type'];
+    if (contentType && contentType.includes('text/html')) {
+        return Promise.reject({
+            ...error,
+            message: "The server returned an invalid response (HTML). This usually means the API URL is incorrect or the server is down.",
+            isHtmlError: true
+        });
+    }
+
     return Promise.reject(error);
   }
 );

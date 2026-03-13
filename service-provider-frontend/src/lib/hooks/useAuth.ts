@@ -46,23 +46,32 @@ export const useAuth = () => {
       console.error("Login error:", error);
       
       let errorMsg = "invalid credentials please try again";
-      try {
-        const resData = error.response?.data;
-        if (resData?.response?.message) {
-          const msg = resData.response.message;
-          if (typeof msg === 'string' && msg.trim() !== '') {
-            errorMsg = msg;
-          } else if (Array.isArray(msg) && msg.length > 0) {
-            errorMsg = msg[0];
+      
+      if (error.isHtmlError) {
+        errorMsg = error.message;
+      } else {
+        try {
+          // Try to extract from NestJS AllExceptionsFilter format
+          const resData = error.response?.data;
+          if (resData?.response?.message) {
+            const msg = resData.response.message;
+            if (typeof msg === 'string' && msg.trim() !== '') {
+              errorMsg = msg;
+            } else if (Array.isArray(msg) && msg.length > 0) {
+              errorMsg = msg[0];
+            }
+          } else if (typeof resData?.response === 'string') {
+            errorMsg = resData.response;
+          } else if (resData?.message) {
+             errorMsg = resData.message;
+          } else if (error.message) {
+             errorMsg = error.message;
+             if (errorMsg.includes("AxiosError") || errorMsg.includes("Network Error") || errorMsg.includes("status code")) {
+               errorMsg = "invalid credentials please try again";
+             }
           }
-        } else if (error.message) {
-           errorMsg = error.message;
-           // If it's a generic AxiosError, fallback to standard message
-           if (errorMsg.includes("AxiosError") || errorMsg.includes("Network Error") || errorMsg.includes("status code")) {
-             errorMsg = "invalid credentials please try again";
-           }
-        }
-      } catch (e) {}
+        } catch (e) {}
+      }
 
       toast.error(errorMsg);
     },
@@ -74,19 +83,29 @@ export const useAuth = () => {
     onError: (error: any) => {
       console.error("Register error:", error);
       let errorMsg = "Something went wrong";
-      try {
-        const resData = error.response?.data;
-        if (resData?.response?.message) {
-          const msg = resData.response.message;
-          if (typeof msg === 'string' && msg.trim() !== '') {
-            errorMsg = msg;
-          } else if (Array.isArray(msg) && msg.length > 0) {
-            errorMsg = msg[0];
+      
+      if (error.isHtmlError) {
+        errorMsg = error.message;
+      } else {
+        try {
+          // Try to extract from NestJS AllExceptionsFilter format
+          const resData = error.response?.data;
+          if (resData?.response?.message) {
+            const msg = resData.response.message;
+            if (typeof msg === 'string' && msg.trim() !== '') {
+              errorMsg = msg;
+            } else if (Array.isArray(msg) && msg.length > 0) {
+              errorMsg = msg[0];
+            }
+          } else if (typeof resData?.response === 'string') {
+            errorMsg = resData.response;
+          } else if (resData?.message) {
+             errorMsg = resData.message;
+          } else if (error.message && !error.message.includes("AxiosError")) {
+             errorMsg = error.message;
           }
-        } else if (error.message && !error.message.includes("AxiosError")) {
-           errorMsg = error.message;
-        }
-      } catch (e) {}
+        } catch (e) {}
+      }
       toast.error(errorMsg);
     },
   });
