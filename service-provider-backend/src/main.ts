@@ -12,8 +12,8 @@ async function bootstrap() {
   });
 
   const { httpAdapter } = app.get(HttpAdapterHost);
-  app.useGlobalInterceptors(new ResponseInterceptor());
 
+  app.useGlobalInterceptors(new ResponseInterceptor());
   app.useGlobalFilters(new AllExceptionsFilter(httpAdapter));
 
   app.useGlobalPipes(
@@ -28,16 +28,17 @@ async function bootstrap() {
 
   app.enableCors({
     origin: process.env.FRONTEND_URL || 'http://localhost:3000',
-    credentials: true, // CRITICAL: Allows cookies
+    credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
   });
 
   app.setGlobalPrefix('api');
 
-  await app.listen(process.env.PORT ?? 3001);
-  console.log(
-    `🚀 Backend running on http://localhost:${process.env.PORT ?? 3001}`,
-  );
+  const port = process.env.PORT || 3001;
+  await app.listen(port);
+
+  console.log(`🚀 Backend running on port ${port}`);
 }
+
 bootstrap();
