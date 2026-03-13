@@ -27,8 +27,8 @@ export class CookieService {
       value: JSON.stringify(authData),
       options: {
         httpOnly: false,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax' as const,
+        secure: true, // Always true for cross-site or HTTPS
+        sameSite: 'none' as const, // Required for cross-site cookies
         maxAge: this.MAX_AGE,
         path: '/',
       },
@@ -41,8 +41,8 @@ export class CookieService {
       value: '',
       options: {
         httpOnly: false,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax' as const,
+        secure: true,
+        sameSite: 'none' as const,
         maxAge: 0,
         path: '/',
       },

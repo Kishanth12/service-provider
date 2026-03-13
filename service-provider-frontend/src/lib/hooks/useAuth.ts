@@ -20,6 +20,23 @@ export const useAuth = () => {
 
   const handleAuthSuccess = (data: AuthResponse, welcomeMessage: string) => {
     setAuth(data.user, data.accessToken);
+    
+    // Manual cookie setting for server-side middleware
+    if (typeof document !== "undefined") {
+      const authData = {
+        state: {
+          user: data.user,
+          accessToken: data.accessToken,
+          isAuthenticated: true,
+        },
+      };
+      
+      const domain = window.location.hostname === 'localhost' ? '' : `; domain=${window.location.hostname}`;
+      const secure = window.location.protocol === 'https:' ? '; Secure' : '';
+      
+      document.cookie = `auth-storage=${encodeURIComponent(JSON.stringify(authData))}; path=/; max-age=${7 * 24 * 60 * 60}${domain}${secure}; SameSite=Lax`;
+    }
+
     const dashboard = ROLE_DASHBOARDS[data.user.role];
 
     if (!dashboard) {
@@ -113,6 +130,13 @@ export const useAuth = () => {
   const logout = async () => {
     try {
       await authApi.logout(); // Call backend to clear cookie
+      
+      // Clear manual cookie
+      if (typeof document !== "undefined") {
+        const domain = window.location.hostname === 'localhost' ? '' : `; domain=${window.location.hostname}`;
+        document.cookie = `auth-storage=; path=/; max-age=0${domain}; SameSite=Lax`;
+      }
+
       clearAuth();
       queryClient.clear();
       toast.info("You have been successfully logged out");
